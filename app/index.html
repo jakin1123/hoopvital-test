@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control de Pulsaciones e IMC</title>
+  <meta name="description" content="Aplicacion web para calcular pulsaciones maximas, zonas cardiovasculares e IMC.">
+  <meta name="theme-color" content="#1f1953">
+  <link rel="icon" type="image/x-icon" href="./assets/favicon/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicon/apple-touch-icon.png">
+  <link rel="mask-icon" href="./assets/favicon/safari-pinned-tab.svg" color="#ff0868">
+  <link rel="manifest" href="./assets/favicon/site.webmanifest">
+  <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <div class="hero__content">
+        <p class="hero__eyebrow">Seguimiento fisiologico</p>
+        <h1>Registro de pulsaciones e IMC</h1>
+        <p class="hero__text">Completa los datos personales y del test para obtener en tiempo real la frecuencia maxima, las zonas cardiovasculares por Karvonen y el indice de masa corporal en un dashboard claro y listo para futura exportacion.</p>
+        <div class="hero__highlights" aria-hidden="true">
+          <span class="hero-chip">PM instantanea</span>
+          <span class="hero-chip">Zonas por Karvonen</span>
+          <span class="hero-chip">IMC y test fisico</span>
+        </div>
+      </div>
+      <div class="hero__stats" aria-hidden="true">
+        <div class="hero__badge hero__badge--primary">
+          <span>Calculo automatico</span>
+          <strong>En vivo</strong>
+        </div>
+        <div class="hero__badge">
+          <span>Dashboard</span>
+          <strong>Profesional</strong>
+        </div>
+      </div>
+    </header>
+
+    <form id="health-form" class="dashboard" aria-label="Panel de control de salud" novalidate>
+      <section class="card card--form" aria-labelledby="personal-data-title">
+        <div class="section-heading">
+          <p class="section-heading__kicker">Entrada principal</p>
+          <h2 id="personal-data-title">Datos personales</h2>
+          <p class="section-heading__text">Registra la informacion base del usuario. Cada cambio actualiza automaticamente los indicadores cardiovasculares y antropometricos.</p>
+        </div>
+
+        <div class="form-grid">
+          <label class="field" for="name">
+            <span class="field__label">Nombre</span>
+            <input id="name" name="name" type="text" inputmode="text" autocomplete="name" placeholder="Ej. Ana Martinez">
+            <small class="field__hint">Identificacion del registro.</small>
+            <small class="field__error" data-error-for="name" aria-live="polite"></small>
+          </label>
+
+          <label class="field" for="age">
+            <span class="field__label">Edad</span>
+            <div class="input-with-unit">
+              <input id="age" name="age" type="text" inputmode="numeric" placeholder="Ej. 28">
+              <span>años</span>
+            </div>
+            <small class="field__hint">Rango valido: 1 a 120.</small>
+            <small class="field__error" data-error-for="age" aria-live="polite"></small>
+          </label>
+
+          <label class="field" for="weight">
+            <span class="field__label">Peso</span>
+            <div class="input-with-unit">
+              <input id="weight" name="weight" type="text" inputmode="decimal" placeholder="Ej. 68.5">
+              <span>kg</span>
+            </div>
+            <small class="field__hint">Admite decimales positivos.</small>
+            <small class="field__error" data-error-for="weight" aria-live="polite"></small>
+          </label>
+
+          <label class="field" for="height">
+            <span class="field__label">Altura</span>
+            <div class="input-with-unit">
+              <input id="height" name="height" type="text" inputmode="decimal" placeholder="Ej. 1.72">
+              <span>m</span>
+            </div>
+            <small class="field__hint">Usa metros, por ejemplo 1.57.</small>
+            <small class="field__error" data-error-for="height" aria-live="polite"></small>
+          </label>
+
+          <label class="field field--wide" for="p1">
+            <span class="field__label">P1 / pulsaciones al despertar</span>
+            <div class="input-with-unit">
+              <input id="p1" name="p1" type="text" inputmode="numeric" value="60" placeholder="60">
+              <span>ppm</span>
+            </div>
+            <small class="field__hint">Frecuencia en reposo editable. Rango valido: 30 a 130.</small>
+            <small class="field__error" data-error-for="p1" aria-live="polite"></small>
+          </label>
+        </div>
+      </section>
+
+      <section class="card card--results" aria-labelledby="results-title">
+        <div class="section-heading section-heading--inline">
+          <div>
+            <p class="section-heading__kicker">Resultados cardiovasculares</p>
+            <h2 id="results-title">Lectura fisiologica</h2>
+            <p class="section-heading__text">La frecuencia maxima se calcula con la edad y las zonas utilizan la reserva cardiaca con P1 para personalizar cada rango.</p>
+          </div>
+          <div class="metric-highlight">
+            <span>PM calculada</span>
+            <strong id="pm-value">--</strong>
+            <small>ppm</small>
+          </div>
+        </div>
+
+        <div class="result-cards" aria-hidden="true">
+          <article class="result-card result-card--accent">
+            <span class="result-card__label">Metodo</span>
+            <strong class="result-card__value">Karvonen</strong>
+            <p class="result-card__text">Reserva cardiaca aplicada sobre P1 y PM.</p>
+          </article>
+          <article class="result-card">
+            <span class="result-card__label">Rangos</span>
+            <strong class="result-card__value">A1-A5</strong>
+            <p class="result-card__text">Cinco zonas progresivas para control del esfuerzo.</p>
+          </article>
+          <article class="result-card">
+            <span class="result-card__label">Actualizacion</span>
+            <strong class="result-card__value">En vivo</strong>
+            <p class="result-card__text">Sin botones ni recargas al editar los datos.</p>
+          </article>
+        </div>
+
+        <div class="actions-panel" aria-labelledby="excel-actions-title">
+          <div class="actions-panel__copy">
+            <p class="section-heading__kicker">Exportacion</p>
+            <h3 id="excel-actions-title">Guardar en Excel</h3>
+            <p class="section-heading__text">Los registros se guardan en localStorage, pueden respaldarse en JSON y luego exportarse a `evaluaciones_fisicas.xlsx` con todas las filas persistidas.</p>
+          </div>
+          <div class="actions-panel__controls">
+            <button id="save-record-btn" class="action-button action-button--primary" type="button">Guardar registro</button>
+            <button id="download-excel-btn" class="action-button action-button--secondary" type="button">Descargar Excel</button>
+            <button id="export-json-btn" class="action-button action-button--secondary" type="button">Exportar JSON</button>
+            <button id="import-json-btn" class="action-button action-button--secondary" type="button">Importar JSON</button>
+            <button id="clear-history-btn" class="action-button action-button--ghost" type="button">Limpiar historial</button>
+          </div>
+          <p id="save-feedback" class="feedback-message" aria-live="polite">Aun no hay registros guardados en el almacenamiento local.</p>
+          <input id="import-json-input" type="file" accept="application/json,.json" hidden>
+        </div>
+      </section>
+
+      <section class="card card--zones" aria-labelledby="zones-title">
+        <div class="section-heading">
+          <p class="section-heading__kicker">Zonas de entrenamiento</p>
+          <h2 id="zones-title">Tabla cardiovascular</h2>
+          <p class="section-heading__text">Consulta los limites minimos y maximos de cada zona de entrenamiento con una lectura visual mas clara y agradable.</p>
+        </div>
+
+        <div class="zones-table-wrapper">
+          <table class="zones-table" aria-describedby="zones-caption">
+            <caption id="zones-caption">Zonas cardiovasculares personalizadas por metodo de reserva cardiaca.</caption>
+            <thead>
+              <tr>
+                <th scope="col">PM</th>
+                <th scope="col">Zona</th>
+                <th scope="col">PS</th>
+              </tr>
+            </thead>
+            <tbody id="zones-table-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card card--bmi" aria-labelledby="bmi-title">
+        <div class="section-heading">
+          <p class="section-heading__kicker">Composicion corporal</p>
+          <h2 id="bmi-title">Indice de masa corporal</h2>
+          <p class="section-heading__text">Resumen rapido del peso, la altura y el rango antropometrico actual del usuario.</p>
+        </div>
+
+        <div class="bmi-layout">
+          <div class="bmi-summary" aria-live="polite">
+            <div class="bmi-summary__grid">
+              <div class="summary-item">
+                <span>Peso</span>
+                <strong id="summary-weight">--</strong>
+              </div>
+              <div class="summary-item">
+                <span>Altura</span>
+                <strong id="summary-height">--</strong>
+              </div>
+              <div class="summary-item">
+                <span>IMC</span>
+                <strong id="bmi-value">--</strong>
+              </div>
+              <div class="summary-item summary-item--wide summary-item--badge">
+                <span>Clasificacion</span>
+                <strong id="bmi-category">Sin datos suficientes</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="reference-table-wrapper">
+            <table class="reference-table" aria-describedby="bmi-reference-caption">
+              <caption id="bmi-reference-caption">Rangos de referencia del indice de masa corporal.</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Rango IMC</th>
+                  <th scope="col">Clasificacion</th>
+                </tr>
+              </thead>
+              <tbody id="bmi-reference-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="card card--test" aria-labelledby="test-title">
+        <div class="section-heading">
+          <p class="section-heading__kicker">Rendimiento de campo</p>
+          <h2 id="test-title">Test fisico</h2>
+          <p class="section-heading__text">Documenta el contexto del test, el tiempo registrado y la evolucion del pulso para dejar el expediente listo para comparacion historica.</p>
+        </div>
+
+        <div class="test-grid">
+          <label class="field field--wide" for="testLocation">
+            <span class="field__label">Lugar del test</span>
+            <input id="testLocation" name="testLocation" type="text" inputmode="text" placeholder="Pista atletica de la Carolina">
+            <small class="field__hint">Identifica el entorno donde se realizo la prueba.</small>
+            <small class="field__error" data-error-for="testLocation" aria-live="polite"></small>
+          </label>
+
+          <label class="field" for="testDistance">
+            <span class="field__label">Distancia</span>
+            <div class="input-with-unit">
+              <input id="testDistance" name="testDistance" type="text" inputmode="decimal" placeholder="3214">
+              <span>metros</span>
+            </div>
+            <small class="field__hint">Ingresa la distancia lograda en metros.</small>
+            <small class="field__error" data-error-for="testDistance" aria-live="polite"></small>
+          </label>
+
+          <label class="field" for="testPulseStart">
+            <span class="field__label">Pulso de inicio</span>
+            <div class="input-with-unit">
+              <input id="testPulseStart" name="testPulseStart" type="text" inputmode="numeric" placeholder="168">
+              <span>pul</span>
+            </div>
+            <small class="field__hint">Rango recomendado: 30 a 250.</small>
+            <small class="field__error" data-error-for="testPulseStart" aria-live="polite"></small>
+          </label>
+
+          <label class="field" for="testTime">
+            <span class="field__label">Tiempo del test</span>
+            <div class="input-with-unit">
+              <input id="testTime" name="testTime" type="text" inputmode="text" placeholder="17'33&quot; o 17:33">
+              <span>mm:ss</span>
+            </div>
+            <small class="field__hint">Acepta formatos como 17'33", 17:33 o 17m 33s.</small>
+            <small class="field__error" data-error-for="testTime" aria-live="polite"></small>
+          </label>
+
+          <label class="field" for="testPulseEnd">
+            <span class="field__label">Pulso final</span>
+            <div class="input-with-unit">
+              <input id="testPulseEnd" name="testPulseEnd" type="text" inputmode="numeric" placeholder="182">
+              <span>pul</span>
+            </div>
+            <small class="field__hint">Pulso al terminar el test.</small>
+            <small class="field__error" data-error-for="testPulseEnd" aria-live="polite"></small>
+          </label>
+
+          <label class="field" for="testPulse1Min">
+            <span class="field__label">Pulso despues de 1 minuto</span>
+            <div class="input-with-unit">
+              <input id="testPulse1Min" name="testPulse1Min" type="text" inputmode="numeric" placeholder="148">
+              <span>pul</span>
+            </div>
+            <small class="field__hint">Recuperacion corta tras el esfuerzo.</small>
+            <small class="field__error" data-error-for="testPulse1Min" aria-live="polite"></small>
+          </label>
+
+          <label class="field" for="testPulse5Min">
+            <span class="field__label">Pulso despues de 5 minutos</span>
+            <div class="input-with-unit">
+              <input id="testPulse5Min" name="testPulse5Min" type="text" inputmode="numeric" placeholder="104">
+              <span>pul</span>
+            </div>
+            <small class="field__hint">Recuperacion extendida del test.</small>
+            <small class="field__error" data-error-for="testPulse5Min" aria-live="polite"></small>
+          </label>
+        </div>
+      </section>
+
+      <section class="card card--data" aria-labelledby="record-title">
+        <div class="section-heading">
+          <p class="section-heading__kicker">Arquitectura preparada</p>
+          <h2 id="record-title">Vista previa del registro</h2>
+          <p class="section-heading__text">Se mantiene visible el objeto final para revisar la estructura serializable completa antes de conectar guardado historico o exportacion.</p>
+        </div>
+
+        <p class="card__text">Este bloque deja visible el objeto serializable unificado con datos personales, fisiologicos y del test, listo para futura exportacion a CSV o Excel.</p>
+        <pre id="record-preview" class="record-preview" aria-live="polite">{}</pre>
+      </section>
+
+      <section class="card card--history" aria-labelledby="history-title">
+        <div class="section-heading section-heading--inline">
+          <div>
+            <p class="section-heading__kicker">Historial en sesion</p>
+            <h2 id="history-title">Registros guardados</h2>
+            <p class="section-heading__text">Vista rapida de los resultados agregados antes de exportar el archivo Excel completo.</p>
+          </div>
+          <div class="history-counter">
+            <span>Total guardados</span>
+            <strong id="history-count">0</strong>
+          </div>
+        </div>
+
+        <div class="reference-table-wrapper">
+          <table class="history-table" aria-describedby="history-caption">
+            <caption id="history-caption">Registros guardados durante la sesion actual.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Edad</th>
+                <th scope="col">IMC</th>
+                <th scope="col">PM</th>
+                <th scope="col">Distancia</th>
+                <th scope="col">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="history-table-body">
+              <tr class="history-table__empty-row">
+                <td colspan="7">Todavia no hay registros guardados en esta sesion.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </form>
+  </div>
+
+  <footer class="site-footer" aria-label="Creditos del sitio">
+    <div class="site-footer__inner">
+      <div class="site-footer__identity">
+        <div class="site-footer__brand">
+        <img class="site-footer__logo-main" src="./assets/branding/jk-logo.png" alt="JAKIN KINETICKER">
+        </div>
+
+        <div class="site-footer__credits">
+          <p class="site-footer__text">Desarrollado por Jakin Añasco</p>
+          <p class="site-footer__copy">&copy; 2026 Jakin Añasco</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@latest/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@latest/dist/jspdf.plugin.autotable.min.js"></script>
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>
