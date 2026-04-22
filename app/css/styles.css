@@ -439,6 +439,13 @@ body::before {
   box-shadow: var(--shadow-sm);
 }
 
+.action-button--neutral {
+  color: var(--text);
+  background: linear-gradient(180deg, #ffffff 0%, #f4f8fd 100%);
+  border-color: rgba(112, 128, 153, 0.18);
+  box-shadow: var(--shadow-sm);
+}
+
 .action-button--ghost {
   color: var(--danger);
   background: #ffffff;

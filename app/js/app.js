@@ -171,6 +171,19 @@ function updateSessionFeedback(persistenceState, type, text) {
   persistenceState.feedback = { type, text };
 }
 
+function resetFormForNewRecord(formElement, persistenceState, sync) {
+  formElement.reset();
+
+  const p1Input = formElement.elements.namedItem("p1");
+  if (p1Input instanceof HTMLInputElement) {
+    p1Input.value = "60";
+  }
+
+  persistenceState.editingRecordId = null;
+  updateSessionFeedback(persistenceState, "success", "Formulario reiniciado. Listo para un nuevo registro.");
+  sync();
+}
+
 function populateFormFromRecord(formElement, record) {
   const fieldMap = {
     name: record.nombre,
@@ -218,6 +231,7 @@ function buildPersistedRecord(state, persistenceState) {
 
 function attachPersistenceActions({ formElement, state, persistenceState, ui, sync }) {
   const saveButton = document.querySelector("#save-record-btn");
+  const resetButton = document.querySelector("#reset-form-btn");
   const downloadButton = document.querySelector("#download-excel-btn");
   const exportJsonButton = document.querySelector("#export-json-btn");
   const importJsonButton = document.querySelector("#import-json-btn");
@@ -227,6 +241,7 @@ function attachPersistenceActions({ formElement, state, persistenceState, ui, sy
 
   if (
     !(saveButton instanceof HTMLButtonElement) ||
+    !(resetButton instanceof HTMLButtonElement) ||
     !(downloadButton instanceof HTMLButtonElement) ||
     !(exportJsonButton instanceof HTMLButtonElement) ||
     !(importJsonButton instanceof HTMLButtonElement) ||
@@ -258,6 +273,10 @@ function attachPersistenceActions({ formElement, state, persistenceState, ui, sy
     }
 
     ui.render(state, record, prepareExportPayload(state), persistenceState);
+  });
+
+  resetButton.addEventListener("click", () => {
+    resetFormForNewRecord(formElement, persistenceState, sync);
   });
 
   downloadButton.addEventListener("click", () => {
