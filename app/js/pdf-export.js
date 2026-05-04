@@ -80,7 +80,7 @@ export function formatRecordForPDF(record) {
   return {
     personalData: [
       ["Nombre", formatValue(record.nombre)],
-      ["Edad", formatValue(record.edad, "anos")],
+      ["Edad", formatValue(record.edad, "años")],
       ["Peso", formatValue(record.peso, "kg")],
       ["Altura", formatValue(record.altura, "m")],
       ["Fecha de registro", formatDisplayDate(record.createdAt)]
