@@ -31,13 +31,6 @@ function createBmiReferenceRowMarkup(range, activeLabel) {
   `;
 }
 
-function createPreviewPayload(record, exportPayload) {
-  return {
-    record,
-    exportRow: exportPayload?.exportRow ?? null
-  };
-}
-
 function formatHistoryDate(value) {
   if (!value) {
     return "--";
@@ -90,7 +83,6 @@ export function createUIController(documentRef = document) {
     historyBody: documentRef.querySelector("#history-table-body"),
     historyCount: documentRef.querySelector("#history-count"),
     saveFeedback: documentRef.querySelector("#save-feedback"),
-    recordPreview: documentRef.querySelector("#record-preview"),
     errorFields: Array.from(documentRef.querySelectorAll("[data-error-for]"))
   };
 
@@ -135,10 +127,6 @@ export function createUIController(documentRef = document) {
     elements.bmiReferenceBody.innerHTML = BMI_RANGES.map((range) => createBmiReferenceRowMarkup(range, activeLabel)).join("");
   }
 
-  function renderRecordPreview(record, exportPayload) {
-    elements.recordPreview.textContent = JSON.stringify(createPreviewPayload(record, exportPayload), null, 2);
-  }
-
   function renderSession(session) {
     const records = session?.records ?? [];
     const feedback = session?.feedback ?? { type: "info", text: "Aun no hay registros guardados en el almacenamiento local." };
@@ -171,7 +159,6 @@ export function createUIController(documentRef = document) {
     renderBmiSummary(state.values, state.computed);
     renderBmiReference(state.computed);
     renderValidation(state.validation);
-    renderRecordPreview(record, exportPayload);
     renderSession(session);
   }
 
