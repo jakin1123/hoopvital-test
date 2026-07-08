@@ -35,6 +35,9 @@ export function sanitizeFieldValue(fieldName, value) {
   switch (fieldName) {
     case "age":
     case "p1":
+    case "testStops":
+    case "strengthPushUpsReps":
+    case "strengthAbsReps":
     case "testPulseStart":
     case "testPulseEnd":
     case "testPulse1Min":
@@ -43,12 +46,69 @@ export function sanitizeFieldValue(fieldName, value) {
     case "weight":
     case "height":
     case "testDistance":
+    case "strengthStandingLongJump":
+    case "strengthSpeed14m":
+    case "strengthZoneDisplacement":
+    case "strengthVerticalJump":
       return sanitizeNumericInput(value, { allowDecimal: true });
     case "testTime":
+    case "strengthPushUpsTime":
+    case "strengthAbsTime":
       return value.replace(/[^0-9:'"msin eg]/gi, "").replace(/\s+/g, " ").trimStart();
     default:
       return value.replace(/\s+/g, " ").trimStart();
   }
+}
+
+function validateOptionalIntegerInRange(value, fieldLabel, min, max) {
+  const parsed = parseOptionalInteger(value);
+
+  if (value === "") {
+    return { isValid: true, message: "", parsedValue: null };
+  }
+
+  if (parsed === null || String(parsed) !== value) {
+    return { isValid: false, message: `${fieldLabel} debe ser un numero entero valido.`, parsedValue: null };
+  }
+
+  if (parsed < min || parsed > max) {
+    return { isValid: false, message: `${fieldLabel} debe estar entre ${min} y ${max}.`, parsedValue: null };
+  }
+
+  return { isValid: true, message: "", parsedValue: parsed };
+}
+
+function validateOptionalPositiveFloat(value, fieldLabel) {
+  const parsed = parseOptionalFloat(value);
+
+  if (value === "") {
+    return { isValid: true, message: "", parsedValue: null };
+  }
+
+  if (parsed === null || parsed <= 0) {
+    return { isValid: false, message: `${fieldLabel} debe ser un valor decimal positivo.`, parsedValue: null };
+  }
+
+  return { isValid: true, message: "", parsedValue: parsed };
+}
+
+function validateOptionalTime(value, exampleLabel) {
+  if (value === "") {
+    return { isValid: true, message: "", parsedValue: "", seconds: null };
+  }
+
+  const seconds = parseTestTimeToSeconds(value);
+
+  if (seconds === null) {
+    return {
+      isValid: false,
+      message: `Usa un formato valido para ${exampleLabel}, por ejemplo 0:57, 57 o 57s.`,
+      parsedValue: value,
+      seconds: null
+    };
+  }
+
+  return { isValid: true, message: "", parsedValue: value, seconds };
 }
 
 function validatePulse(value, fieldLabel) {
@@ -144,6 +204,7 @@ export function validateP1(value) {
 export function validateTestLocation(value, allFields) {
   const hasAnyTestField = [
     allFields.testDistance,
+    allFields.testStops,
     allFields.testPulseStart,
     allFields.testTime,
     allFields.testPulseEnd,
@@ -195,6 +256,64 @@ export function validateTestTime(value) {
   return { isValid: true, message: "", parsedValue: value, seconds };
 }
 
+export function validateTestStops(value) {
+  const parsed = parseOptionalInteger(value);
+
+  if (value === "") {
+    return { isValid: false, message: "Ingresa cuantas veces se detuvo el atleta durante el test.", parsedValue: null };
+  }
+
+  if (parsed === null || String(parsed) !== value) {
+    return { isValid: false, message: "Las detenciones deben ser un numero entero valido.", parsedValue: null };
+  }
+
+  if (parsed < 0 || parsed > 99) {
+    return { isValid: false, message: "Las detenciones deben estar entre 0 y 99.", parsedValue: null };
+  }
+
+  return { isValid: true, message: "", parsedValue: parsed };
+}
+
+export function validateStrengthPushUpsReps(value) {
+  return validateOptionalIntegerInRange(value, "Las flexiones de codo", 0, 300);
+}
+
+export function validateStrengthPushUpsTime(value) {
+  return validateOptionalTime(value, "el tiempo de flexiones");
+}
+
+export function validateStrengthPushUpsObservations(value) {
+  if (value.length > 500) {
+    return { isValid: false, message: "Las observaciones no deben superar los 500 caracteres.", parsedValue: value.slice(0, 500) };
+  }
+
+  return { isValid: true, message: "", parsedValue: value.trim() };
+}
+
+export function validateStrengthAbsReps(value) {
+  return validateOptionalIntegerInRange(value, "Los abdominales", 0, 500);
+}
+
+export function validateStrengthAbsTime(value) {
+  return validateOptionalTime(value, "el tiempo de abdominales");
+}
+
+export function validateStrengthStandingLongJump(value) {
+  return validateOptionalPositiveFloat(value, "El salto sin impulso");
+}
+
+export function validateStrengthSpeed14m(value) {
+  return validateOptionalPositiveFloat(value, "La velocidad de 14 m");
+}
+
+export function validateStrengthZoneDisplacement(value) {
+  return validateOptionalPositiveFloat(value, "El desplazamiento por zona");
+}
+
+export function validateStrengthVerticalJump(value) {
+  return validateOptionalPositiveFloat(value, "El salto vertical");
+}
+
 export function validateTestPulseStart(value) {
   return validatePulse(value, "El pulso de inicio");
 }
@@ -219,11 +338,21 @@ export function validateForm(fields) {
     height: validateHeight(fields.height),
     p1: validateP1(fields.p1),
     testDistance: validateTestDistance(fields.testDistance),
+    testStops: validateTestStops(fields.testStops),
     testPulseStart: validateTestPulseStart(fields.testPulseStart),
     testTime: validateTestTime(fields.testTime),
     testPulseEnd: validateTestPulseEnd(fields.testPulseEnd),
     testPulse1Min: validateTestPulse1Min(fields.testPulse1Min),
-    testPulse5Min: validateTestPulse5Min(fields.testPulse5Min)
+    testPulse5Min: validateTestPulse5Min(fields.testPulse5Min),
+    strengthPushUpsReps: validateStrengthPushUpsReps(fields.strengthPushUpsReps),
+    strengthPushUpsTime: validateStrengthPushUpsTime(fields.strengthPushUpsTime),
+    strengthPushUpsObservations: validateStrengthPushUpsObservations(fields.strengthPushUpsObservations),
+    strengthAbsReps: validateStrengthAbsReps(fields.strengthAbsReps),
+    strengthAbsTime: validateStrengthAbsTime(fields.strengthAbsTime),
+    strengthStandingLongJump: validateStrengthStandingLongJump(fields.strengthStandingLongJump),
+    strengthSpeed14m: validateStrengthSpeed14m(fields.strengthSpeed14m),
+    strengthZoneDisplacement: validateStrengthZoneDisplacement(fields.strengthZoneDisplacement),
+    strengthVerticalJump: validateStrengthVerticalJump(fields.strengthVerticalJump)
   };
 
   validation.testLocation = validateTestLocation(fields.testLocation, fields);

@@ -124,6 +124,16 @@
                 <small class="field__error" data-error-for="testDistance" aria-live="polite"></small>
               </label>
 
+              <label class="field" for="testStops">
+                <span class="field__label">Detenciones durante el test</span>
+                <div class="input-with-unit">
+                  <input id="testStops" name="testStops" type="text" inputmode="numeric" value="0" placeholder="0">
+                  <span>veces</span>
+                </div>
+                <small class="field__hint">Campo obligatorio. Indica cuantas veces el atleta se detuvo.</small>
+                <small class="field__error" data-error-for="testStops" aria-live="polite"></small>
+              </label>
+
               <label class="field" for="testPulseStart">
                 <span class="field__label">Pulso de inicio</span>
                 <div class="input-with-unit">
@@ -175,6 +185,7 @@
               </label>
             </div>
           </section>
+
         </div>
 
         <div class="dashboard__column dashboard__column--right">
@@ -254,6 +265,103 @@
         </div>
       </div>
 
+      <section class="card card--strength" aria-labelledby="strength-title">
+        <div class="section-heading">
+          <p class="section-heading__kicker">Evaluacion complementaria</p>
+          <h2 id="strength-title">Test de fuerza</h2>
+          <p class="section-heading__text">Registra resultados opcionales de fuerza y potencia para complementar el expediente del atleta sin afectar los calculos cardiovasculares.</p>
+        </div>
+
+        <div class="test-grid">
+          <label class="field" for="strengthPushUpsReps">
+            <span class="field__label">Flexiones de codo</span>
+            <div class="input-with-unit">
+              <input id="strengthPushUpsReps" name="strengthPushUpsReps" type="text" inputmode="numeric" placeholder="30">
+              <span>reps</span>
+            </div>
+            <small class="field__hint">Cantidad total de repeticiones completadas.</small>
+            <small class="field__error" data-error-for="strengthPushUpsReps" aria-live="polite"></small>
+          </label>
+
+          <label class="field" for="strengthPushUpsTime">
+            <span class="field__label">Tiempo de flexiones de codo</span>
+            <div class="input-with-unit">
+              <input id="strengthPushUpsTime" name="strengthPushUpsTime" type="text" inputmode="text" placeholder="0:57 o 57s">
+              <span>mm:ss</span>
+            </div>
+            <small class="field__hint">Acepta formatos como 0:57, 57 o 57s.</small>
+            <small class="field__error" data-error-for="strengthPushUpsTime" aria-live="polite"></small>
+          </label>
+
+          <label class="field field--wide" for="strengthPushUpsObservations">
+            <span class="field__label">Observaciones sobre flexiones de codo</span>
+            <textarea id="strengthPushUpsObservations" name="strengthPushUpsObservations" rows="3" placeholder="Ej. extension incompleta de codos o tecnica correcta."></textarea>
+            <small class="field__hint">Campo opcional para anotar tecnica, limitaciones o incidencias.</small>
+            <small class="field__error" data-error-for="strengthPushUpsObservations" aria-live="polite"></small>
+          </label>
+
+          <label class="field" for="strengthAbsReps">
+            <span class="field__label">Abdominales</span>
+            <div class="input-with-unit">
+              <input id="strengthAbsReps" name="strengthAbsReps" type="text" inputmode="numeric" placeholder="39">
+              <span>reps</span>
+            </div>
+            <small class="field__hint">Cantidad total de repeticiones completadas.</small>
+            <small class="field__error" data-error-for="strengthAbsReps" aria-live="polite"></small>
+          </label>
+
+          <label class="field" for="strengthAbsTime">
+            <span class="field__label">Tiempo de abdominales</span>
+            <div class="input-with-unit">
+              <input id="strengthAbsTime" name="strengthAbsTime" type="text" inputmode="text" placeholder="1:00 o 60s">
+              <span>mm:ss</span>
+            </div>
+            <small class="field__hint">Acepta formatos como 1:00, 60 o 60s.</small>
+            <small class="field__error" data-error-for="strengthAbsTime" aria-live="polite"></small>
+          </label>
+
+          <label class="field" for="strengthStandingLongJump">
+            <span class="field__label">Salto sin impulso</span>
+            <div class="input-with-unit">
+              <input id="strengthStandingLongJump" name="strengthStandingLongJump" type="text" inputmode="decimal" placeholder="1.25">
+              <span>m</span>
+            </div>
+            <small class="field__hint">Marca alcanzada en metros.</small>
+            <small class="field__error" data-error-for="strengthStandingLongJump" aria-live="polite"></small>
+          </label>
+
+          <label class="field" for="strengthSpeed14m">
+            <span class="field__label">Velocidad 14 m</span>
+            <div class="input-with-unit">
+              <input id="strengthSpeed14m" name="strengthSpeed14m" type="text" inputmode="decimal" placeholder="3.35">
+              <span>s</span>
+            </div>
+            <small class="field__hint">Tiempo registrado para recorrer 14 metros.</small>
+            <small class="field__error" data-error-for="strengthSpeed14m" aria-live="polite"></small>
+          </label>
+
+          <label class="field" for="strengthZoneDisplacement">
+            <span class="field__label">Desplazamiento zona</span>
+            <div class="input-with-unit">
+              <input id="strengthZoneDisplacement" name="strengthZoneDisplacement" type="text" inputmode="decimal" placeholder="12.28">
+              <span>s</span>
+            </div>
+            <small class="field__hint">Tiempo total del desplazamiento por zonas.</small>
+            <small class="field__error" data-error-for="strengthZoneDisplacement" aria-live="polite"></small>
+          </label>
+
+          <label class="field" for="strengthVerticalJump">
+            <span class="field__label">Salto vertical</span>
+            <div class="input-with-unit">
+              <input id="strengthVerticalJump" name="strengthVerticalJump" type="text" inputmode="decimal" placeholder="2.46">
+              <span>m</span>
+            </div>
+            <small class="field__hint">Altura o marca registrada en el test vertical.</small>
+            <small class="field__error" data-error-for="strengthVerticalJump" aria-live="polite"></small>
+          </label>
+        </div>
+      </section>
+
       <section class="card card--bmi" aria-labelledby="bmi-title">
         <div class="section-heading">
           <p class="section-heading__kicker">Composicion corporal</p>
@@ -319,21 +427,41 @@
                 <th scope="col">Nombre</th>
                 <th scope="col">Fecha</th>
                 <th scope="col">Edad</th>
-                <th scope="col">IMC</th>
-                <th scope="col">PM</th>
-                <th scope="col">Distancia</th>
+                <th scope="col">Estatura</th>
+                <th scope="col">Peso</th>
                 <th scope="col">Acciones</th>
               </tr>
             </thead>
             <tbody id="history-table-body">
               <tr class="history-table__empty-row">
-                <td colspan="7">Todavia no hay registros guardados en esta sesion.</td>
+                <td colspan="6">Todavia no hay registros guardados en esta sesion.</td>
               </tr>
             </tbody>
           </table>
         </div>
       </section>
     </form>
+
+    <div id="record-detail-modal" class="record-modal" hidden>
+      <div class="record-modal__backdrop" data-modal-close></div>
+      <section class="record-modal__panel" role="dialog" aria-modal="true" aria-labelledby="record-modal-title">
+        <header class="record-modal__header">
+          <div>
+            <p class="section-heading__kicker">Detalle del registro</p>
+            <h2 id="record-modal-title">Informacion del atleta</h2>
+          </div>
+          <button class="record-modal__close" type="button" data-modal-close>Cerrar</button>
+        </header>
+        <div id="record-modal-body" class="record-modal__body"></div>
+        <footer class="record-modal__footer">
+          <div class="record-modal__actions">
+            <button id="record-modal-edit-btn" class="history-action-button history-action-button--edit" type="button">Editar</button>
+            <button id="record-modal-delete-btn" class="history-action-button history-action-button--delete" type="button">Eliminar</button>
+            <button id="record-modal-pdf-btn" class="history-action-button history-action-button--pdf" type="button">Descargar PDF</button>
+          </div>
+        </footer>
+      </section>
+    </div>
   </div>
 
   <footer class="site-footer" aria-label="Creditos del sitio">

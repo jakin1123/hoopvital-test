@@ -14,11 +14,21 @@ const FIELD_NAMES = [
   "p1",
   "testLocation",
   "testDistance",
+  "testStops",
   "testPulseStart",
   "testTime",
   "testPulseEnd",
   "testPulse1Min",
-  "testPulse5Min"
+  "testPulse5Min",
+  "strengthPushUpsReps",
+  "strengthPushUpsTime",
+  "strengthPushUpsObservations",
+  "strengthAbsReps",
+  "strengthAbsTime",
+  "strengthStandingLongJump",
+  "strengthSpeed14m",
+  "strengthZoneDisplacement",
+  "strengthVerticalJump"
 ];
 
 function createInitialState() {
@@ -31,12 +41,24 @@ function createInitialState() {
       p1: 60,
       testLocation: "",
       testDistance: null,
+      testStops: 0,
       testPulseStart: null,
       testTimeText: "",
       testTimeSeconds: null,
       testPulseEnd: null,
       testPulse1Min: null,
-      testPulse5Min: null
+      testPulse5Min: null,
+      strengthPushUpsReps: null,
+      strengthPushUpsTimeText: "",
+      strengthPushUpsTimeSeconds: null,
+      strengthPushUpsObservations: "",
+      strengthAbsReps: null,
+      strengthAbsTimeText: "",
+      strengthAbsTimeSeconds: null,
+      strengthStandingLongJump: null,
+      strengthSpeed14m: null,
+      strengthZoneDisplacement: null,
+      strengthVerticalJump: null
     },
     computed: {
       pm: null,
@@ -52,11 +74,21 @@ function createInitialState() {
       p1: { isValid: true, message: "" },
       testLocation: { isValid: true, message: "" },
       testDistance: { isValid: true, message: "" },
+      testStops: { isValid: true, message: "" },
       testPulseStart: { isValid: true, message: "" },
       testTime: { isValid: true, message: "" },
       testPulseEnd: { isValid: true, message: "" },
       testPulse1Min: { isValid: true, message: "" },
-      testPulse5Min: { isValid: true, message: "" }
+      testPulse5Min: { isValid: true, message: "" },
+      strengthPushUpsReps: { isValid: true, message: "" },
+      strengthPushUpsTime: { isValid: true, message: "" },
+      strengthPushUpsObservations: { isValid: true, message: "" },
+      strengthAbsReps: { isValid: true, message: "" },
+      strengthAbsTime: { isValid: true, message: "" },
+      strengthStandingLongJump: { isValid: true, message: "" },
+      strengthSpeed14m: { isValid: true, message: "" },
+      strengthZoneDisplacement: { isValid: true, message: "" },
+      strengthVerticalJump: { isValid: true, message: "" }
     },
     persistence: getFuturePersistenceHooks()
   };
@@ -110,12 +142,24 @@ function updateFormState(state, formElement) {
     p1: validation.p1.parsedValue,
     testLocation: validation.testLocation.parsedValue ?? "",
     testDistance: validation.testDistance.parsedValue,
+    testStops: validation.testStops.parsedValue,
     testPulseStart: validation.testPulseStart.parsedValue,
     testTimeText: validation.testTime.parsedValue ?? "",
     testTimeSeconds: validation.testTime.seconds ?? null,
     testPulseEnd: validation.testPulseEnd.parsedValue,
     testPulse1Min: validation.testPulse1Min.parsedValue,
-    testPulse5Min: validation.testPulse5Min.parsedValue
+    testPulse5Min: validation.testPulse5Min.parsedValue,
+    strengthPushUpsReps: validation.strengthPushUpsReps.parsedValue,
+    strengthPushUpsTimeText: validation.strengthPushUpsTime.parsedValue ?? "",
+    strengthPushUpsTimeSeconds: validation.strengthPushUpsTime.seconds ?? null,
+    strengthPushUpsObservations: validation.strengthPushUpsObservations.parsedValue ?? "",
+    strengthAbsReps: validation.strengthAbsReps.parsedValue,
+    strengthAbsTimeText: validation.strengthAbsTime.parsedValue ?? "",
+    strengthAbsTimeSeconds: validation.strengthAbsTime.seconds ?? null,
+    strengthStandingLongJump: validation.strengthStandingLongJump.parsedValue,
+    strengthSpeed14m: validation.strengthSpeed14m.parsedValue,
+    strengthZoneDisplacement: validation.strengthZoneDisplacement.parsedValue,
+    strengthVerticalJump: validation.strengthVerticalJump.parsedValue
   };
 
   state.validation = validation;
@@ -126,7 +170,7 @@ function attachInputSanitizers(formElement) {
   formElement.addEventListener("input", (event) => {
     const target = event.target;
 
-    if (!(target instanceof HTMLInputElement)) {
+    if (!(target instanceof HTMLInputElement) && !(target instanceof HTMLTextAreaElement)) {
       return;
     }
 
@@ -163,7 +207,9 @@ function hasRequiredFields(state) {
     state.values.name &&
     state.values.age !== null &&
     state.values.weight !== null &&
-    state.values.height !== null
+    state.values.height !== null &&
+    state.values.testStops !== null &&
+    Object.values(state.validation).every((fieldState) => fieldState.isValid)
   );
 }
 
@@ -177,6 +223,11 @@ function resetFormForNewRecord(formElement, persistenceState, sync) {
   const p1Input = formElement.elements.namedItem("p1");
   if (p1Input instanceof HTMLInputElement) {
     p1Input.value = "60";
+  }
+
+  const testStopsInput = formElement.elements.namedItem("testStops");
+  if (testStopsInput instanceof HTMLInputElement) {
+    testStopsInput.value = "0";
   }
 
   persistenceState.editingRecordId = null;
@@ -193,17 +244,27 @@ function populateFormFromRecord(formElement, record) {
     p1: record.p1,
     testLocation: record.testLugar,
     testDistance: record.testDistanciaMetros,
+    testStops: record.testDetenciones ?? 0,
     testPulseStart: record.testPulsoInicio,
     testTime: record.testTiempoTexto,
     testPulseEnd: record.testPulsoFinal,
     testPulse1Min: record.testPulso1Min,
-    testPulse5Min: record.testPulso5Min
+    testPulse5Min: record.testPulso5Min,
+    strengthPushUpsReps: record.testFuerzaFlexionesCodo,
+    strengthPushUpsTime: record.testFuerzaFlexionesCodoTiempoTexto,
+    strengthPushUpsObservations: record.testFuerzaObservacionesFlexionesCodo,
+    strengthAbsReps: record.testFuerzaAbdominales,
+    strengthAbsTime: record.testFuerzaAbdominalesTiempoTexto,
+    strengthStandingLongJump: record.testFuerzaSaltoSinImpulso,
+    strengthSpeed14m: record.testFuerzaVelocidad14m,
+    strengthZoneDisplacement: record.testFuerzaDesplazamientoZona,
+    strengthVerticalJump: record.testFuerzaSaltoVertical
   };
 
   Object.entries(fieldMap).forEach(([fieldName, fieldValue]) => {
     const input = formElement.elements.namedItem(fieldName);
 
-    if (input instanceof HTMLInputElement) {
+    if (input instanceof HTMLInputElement || input instanceof HTMLTextAreaElement) {
       input.value = fieldValue ?? "";
     }
   });
@@ -238,6 +299,7 @@ function attachPersistenceActions({ formElement, state, persistenceState, ui, sy
   const clearHistoryButton = document.querySelector("#clear-history-btn");
   const importJsonInput = document.querySelector("#import-json-input");
   const historyBody = document.querySelector("#history-table-body");
+  const recordModal = document.querySelector("#record-detail-modal");
 
   if (
     !(saveButton instanceof HTMLButtonElement) ||
@@ -247,9 +309,47 @@ function attachPersistenceActions({ formElement, state, persistenceState, ui, sy
     !(importJsonButton instanceof HTMLButtonElement) ||
     !(clearHistoryButton instanceof HTMLButtonElement) ||
     !(importJsonInput instanceof HTMLInputElement) ||
-    !(historyBody instanceof HTMLTableSectionElement)
+    !(historyBody instanceof HTMLTableSectionElement) ||
+    !(recordModal instanceof HTMLDivElement)
   ) {
     return;
+  }
+
+  function getRecordById(recordId) {
+    return persistenceState.records.find((record) => record.id === recordId) ?? null;
+  }
+
+  async function downloadRecordPdf(record) {
+    try {
+      await generateIndividualPDF(record);
+      updateSessionFeedback(persistenceState, "success", "PDF individual descargado correctamente.");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "No fue posible generar el PDF del registro.";
+      updateSessionFeedback(persistenceState, "error", message);
+    }
+
+    ui.render(state, buildRecordFromState(state), prepareExportPayload(state), persistenceState);
+  }
+
+  function loadRecordForEditing(recordId, record) {
+    populateFormFromRecord(formElement, record);
+    persistenceState.editingRecordId = recordId;
+    ui.closeRecordModal();
+    updateSessionFeedback(persistenceState, "info", "Registro cargado en el formulario para edicion.");
+    sync();
+    formElement.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function removeRecord(recordId) {
+    persistenceState.records = deleteRecord(recordId);
+
+    if (persistenceState.editingRecordId === recordId) {
+      persistenceState.editingRecordId = null;
+    }
+
+    ui.closeRecordModal();
+    updateSessionFeedback(persistenceState, "success", "Registro eliminado del historial persistente.");
+    ui.render(state, buildRecordFromState(state), prepareExportPayload(state), persistenceState);
   }
 
   saveButton.addEventListener("click", () => {
@@ -346,7 +446,7 @@ function attachPersistenceActions({ formElement, state, persistenceState, ui, sy
     ui.render(state, buildRecordFromState(state), prepareExportPayload(state), persistenceState);
   });
 
-  historyBody.addEventListener("click", (event) => {
+  historyBody.addEventListener("click", async (event) => {
     const target = event.target;
 
     if (!(target instanceof HTMLButtonElement)) {
@@ -361,48 +461,81 @@ function attachPersistenceActions({ formElement, state, persistenceState, ui, sy
     }
 
     if (action === "delete") {
-      persistenceState.records = deleteRecord(recordId);
+      removeRecord(recordId);
+      return;
+    }
 
-      if (persistenceState.editingRecordId === recordId) {
-        persistenceState.editingRecordId = null;
+    if (action === "view") {
+      const record = getRecordById(recordId);
+
+      if (!record) {
+        return;
       }
 
-      updateSessionFeedback(persistenceState, "success", "Registro eliminado del historial persistente.");
-      ui.render(state, buildRecordFromState(state), prepareExportPayload(state), persistenceState);
+      ui.openRecordModal(record);
       return;
     }
 
     if (action === "pdf") {
-      const record = persistenceState.records.find((currentRecord) => currentRecord.id === recordId);
+      const record = getRecordById(recordId);
 
       if (!record) {
         return;
       }
 
-      try {
-        generateIndividualPDF(record);
-        updateSessionFeedback(persistenceState, "success", "PDF individual descargado correctamente.");
-      } catch (error) {
-        const message = error instanceof Error ? error.message : "No fue posible generar el PDF del registro.";
-        updateSessionFeedback(persistenceState, "error", message);
-      }
-
-      ui.render(state, buildRecordFromState(state), prepareExportPayload(state), persistenceState);
+      await downloadRecordPdf(record);
       return;
     }
 
     if (action === "edit") {
-      const record = persistenceState.records.find((currentRecord) => currentRecord.id === recordId);
+      const record = getRecordById(recordId);
 
       if (!record) {
         return;
       }
 
-      populateFormFromRecord(formElement, record);
-      persistenceState.editingRecordId = recordId;
-      updateSessionFeedback(persistenceState, "info", "Registro cargado en el formulario para edicion.");
-      sync();
-      formElement.scrollIntoView({ behavior: "smooth", block: "start" });
+      loadRecordForEditing(recordId, record);
+    }
+  });
+
+  recordModal.addEventListener("click", async (event) => {
+    const target = event.target;
+
+    if (!(target instanceof HTMLButtonElement)) {
+      return;
+    }
+
+    const recordId = target.dataset.id;
+
+    if (!recordId) {
+      return;
+    }
+
+    const record = getRecordById(recordId);
+
+    if (!record) {
+      ui.closeRecordModal();
+      return;
+    }
+
+    if (target.id === "record-modal-pdf-btn") {
+      await downloadRecordPdf(record);
+      return;
+    }
+
+    if (target.id === "record-modal-edit-btn") {
+      loadRecordForEditing(recordId, record);
+      return;
+    }
+
+    if (target.id === "record-modal-delete-btn") {
+      const confirmed = window.confirm("¿Seguro que deseas eliminar este registro?");
+
+      if (!confirmed) {
+        return;
+      }
+
+      removeRecord(recordId);
     }
   });
 }

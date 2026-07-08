@@ -39,12 +39,24 @@ export function createEmptyRecord() {
     clasificacionIMC: "",
     testLugar: "",
     testDistanciaMetros: null,
+    testDetenciones: 0,
     testPulsoInicio: null,
     testTiempoTexto: "",
     testTiempoSegundos: null,
     testPulsoFinal: null,
     testPulso1Min: null,
     testPulso5Min: null,
+    testFuerzaFlexionesCodo: null,
+    testFuerzaFlexionesCodoTiempoTexto: "",
+    testFuerzaFlexionesCodoTiempoSegundos: null,
+    testFuerzaObservacionesFlexionesCodo: "",
+    testFuerzaAbdominales: null,
+    testFuerzaAbdominalesTiempoTexto: "",
+    testFuerzaAbdominalesTiempoSegundos: null,
+    testFuerzaSaltoSinImpulso: null,
+    testFuerzaVelocidad14m: null,
+    testFuerzaDesplazamientoZona: null,
+    testFuerzaSaltoVertical: null,
     createdAt: new Date().toISOString()
   };
 }
@@ -70,12 +82,24 @@ export function buildRecordFromState(formState) {
   record.clasificacionIMC = bmiRange?.label ?? "";
   record.testLugar = formState.values.testLocation ?? "";
   record.testDistanciaMetros = formState.values.testDistance;
+  record.testDetenciones = formState.values.testStops;
   record.testPulsoInicio = formState.values.testPulseStart;
   record.testTiempoTexto = formState.values.testTimeText ?? "";
   record.testTiempoSegundos = formState.values.testTimeSeconds;
   record.testPulsoFinal = formState.values.testPulseEnd;
   record.testPulso1Min = formState.values.testPulse1Min;
   record.testPulso5Min = formState.values.testPulse5Min;
+  record.testFuerzaFlexionesCodo = formState.values.strengthPushUpsReps;
+  record.testFuerzaFlexionesCodoTiempoTexto = formState.values.strengthPushUpsTimeText ?? "";
+  record.testFuerzaFlexionesCodoTiempoSegundos = formState.values.strengthPushUpsTimeSeconds;
+  record.testFuerzaObservacionesFlexionesCodo = formState.values.strengthPushUpsObservations ?? "";
+  record.testFuerzaAbdominales = formState.values.strengthAbsReps;
+  record.testFuerzaAbdominalesTiempoTexto = formState.values.strengthAbsTimeText ?? "";
+  record.testFuerzaAbdominalesTiempoSegundos = formState.values.strengthAbsTimeSeconds;
+  record.testFuerzaSaltoSinImpulso = formState.values.strengthStandingLongJump;
+  record.testFuerzaVelocidad14m = formState.values.strengthSpeed14m;
+  record.testFuerzaDesplazamientoZona = formState.values.strengthZoneDisplacement;
+  record.testFuerzaSaltoVertical = formState.values.strengthVerticalJump;
 
   mapZonesToRecordFields(record, zones);
 
@@ -119,12 +143,24 @@ export function createExportRow(record) {
     clasificacionIMC: record.clasificacionIMC,
     lugarTest: record.testLugar,
     distanciaMetros: record.testDistanciaMetros,
+    detencionesTest: record.testDetenciones,
     pulsoInicio: record.testPulsoInicio,
     tiempoTest: record.testTiempoTexto,
     tiempoSegundos: record.testTiempoSegundos,
     pulsoFinal: record.testPulsoFinal,
     pulso1Min: record.testPulso1Min,
     pulso5Min: record.testPulso5Min,
+    flexionesCodoReps: record.testFuerzaFlexionesCodo,
+    flexionesCodoTiempo: record.testFuerzaFlexionesCodoTiempoTexto,
+    flexionesCodoTiempoSegundos: record.testFuerzaFlexionesCodoTiempoSegundos,
+    observacionesFlexionesCodo: record.testFuerzaObservacionesFlexionesCodo,
+    abdominalesReps: record.testFuerzaAbdominales,
+    abdominalesTiempo: record.testFuerzaAbdominalesTiempoTexto,
+    abdominalesTiempoSegundos: record.testFuerzaAbdominalesTiempoSegundos,
+    saltoSinImpulso: record.testFuerzaSaltoSinImpulso,
+    velocidad14m: record.testFuerzaVelocidad14m,
+    desplazamientoZona: record.testFuerzaDesplazamientoZona,
+    saltoVertical: record.testFuerzaSaltoVertical,
     fechaRegistro: record.createdAt
   };
 }

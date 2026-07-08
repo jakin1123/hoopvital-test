@@ -51,17 +51,108 @@ function formatHistoryDate(value) {
   }).format(date);
 }
 
+function formatZoneValue(min, max) {
+  if (min === null || min === undefined || max === null || max === undefined) {
+    return "--";
+  }
+
+  return `${min} - ${max} ppm`;
+}
+
+function createDetailRowMarkup(label, value) {
+  return `
+    <div class="record-modal__item">
+      <span>${label}</span>
+      <strong>${value}</strong>
+    </div>
+  `;
+}
+
+function createDetailSectionMarkup(title, items) {
+  return `
+    <section class="record-modal__section">
+      <h3>${title}</h3>
+      <div class="record-modal__grid">
+        ${items.map(([label, value]) => createDetailRowMarkup(label, value)).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function createRecordDetailMarkup(record) {
+  const sections = [
+    {
+      title: "Datos personales",
+      items: [
+        ["Nombre", displayValue(record.nombre)],
+        ["Fecha de registro", formatHistoryDate(record.createdAt)],
+        ["Edad", displayValue(record.edad, "años")],
+        ["Peso", displayValue(record.peso, "kg")],
+        ["Altura", displayValue(record.altura, "m")]
+      ]
+    },
+    {
+      title: "Resultados fisiologicos",
+      items: [
+        ["Pulso basal", displayValue(record.p1, "ppm")],
+        ["Pulsaciones maximas", displayValue(record.pm, "ppm")],
+        ["IMC", displayValue(record.imc)],
+        ["Clasificacion IMC", displayValue(record.clasificacionIMC)]
+      ]
+    },
+    {
+      title: "Zonas cardiovasculares",
+      items: [
+        ["Zona A1", formatZoneValue(record.zonaA1Min, record.zonaA1Max)],
+        ["Zona A2", formatZoneValue(record.zonaA2Min, record.zonaA2Max)],
+        ["Zona A3", formatZoneValue(record.zonaA3Min, record.zonaA3Max)],
+        ["Zona A4", formatZoneValue(record.zonaA4Min, record.zonaA4Max)],
+        ["Zona A5", formatZoneValue(record.zonaA5Min, record.zonaA5Max)]
+      ]
+    },
+    {
+      title: "Test fisico",
+      items: [
+        ["Lugar del test", displayValue(record.testLugar)],
+        ["Distancia", displayValue(record.testDistanciaMetros, "m")],
+        ["Detenciones", displayValue(record.testDetenciones, "veces")],
+        ["Pulso de inicio", displayValue(record.testPulsoInicio, "pul")],
+        ["Tiempo del test", displayValue(record.testTiempoTexto)],
+        ["Pulso final", displayValue(record.testPulsoFinal, "pul")],
+        ["Pulso al minuto 1", displayValue(record.testPulso1Min, "pul")],
+        ["Pulso al minuto 5", displayValue(record.testPulso5Min, "pul")]
+      ]
+    },
+    {
+      title: "Test de fuerza",
+      items: [
+        ["Flexiones de codo", displayValue(record.testFuerzaFlexionesCodo, "reps")],
+        ["Tiempo flexiones", displayValue(record.testFuerzaFlexionesCodoTiempoTexto)],
+        ["Obs. flexiones", displayValue(record.testFuerzaObservacionesFlexionesCodo)],
+        ["Abdominales", displayValue(record.testFuerzaAbdominales, "reps")],
+        ["Tiempo abdominales", displayValue(record.testFuerzaAbdominalesTiempoTexto)],
+        ["Salto sin impulso", displayValue(record.testFuerzaSaltoSinImpulso, "m")],
+        ["Velocidad 14 m", displayValue(record.testFuerzaVelocidad14m, "s")],
+        ["Desplazamiento zona", displayValue(record.testFuerzaDesplazamientoZona, "s")],
+        ["Salto vertical", displayValue(record.testFuerzaSaltoVertical, "m")]
+      ]
+    }
+  ];
+
+  return sections.map((section) => createDetailSectionMarkup(section.title, section.items)).join("");
+}
+
 function createHistoryRowMarkup(record) {
   return `
     <tr>
       <td>${record.nombre || "Sin nombre"}</td>
       <td>${formatHistoryDate(record.createdAt)}</td>
       <td>${record.edad ?? "--"}</td>
-      <td>${record.imc ?? "--"}</td>
-      <td>${record.pm ?? "--"}</td>
-      <td>${displayValue(record.testDistanciaMetros, "m")}</td>
+      <td>${displayValue(record.altura, "m")}</td>
+      <td>${displayValue(record.peso, "kg")}</td>
       <td>
         <div class="history-actions">
+          <button class="history-action-button history-action-button--view" type="button" data-action="view" data-id="${record.id}">Ver</button>
           <button class="history-action-button history-action-button--edit" type="button" data-action="edit" data-id="${record.id}">Editar</button>
           <button class="history-action-button history-action-button--delete" type="button" data-action="delete" data-id="${record.id}">Eliminar</button>
           <button class="history-action-button history-action-button--pdf" type="button" data-action="pdf" data-id="${record.id}">PDF</button>
@@ -83,8 +174,76 @@ export function createUIController(documentRef = document) {
     historyBody: documentRef.querySelector("#history-table-body"),
     historyCount: documentRef.querySelector("#history-count"),
     saveFeedback: documentRef.querySelector("#save-feedback"),
+    recordModal: documentRef.querySelector("#record-detail-modal"),
+    recordModalPanel: documentRef.querySelector(".record-modal__panel"),
+    recordModalBody: documentRef.querySelector("#record-modal-body"),
+    recordModalTitle: documentRef.querySelector("#record-modal-title"),
+    recordModalEditButton: documentRef.querySelector("#record-modal-edit-btn"),
+    recordModalDeleteButton: documentRef.querySelector("#record-modal-delete-btn"),
+    recordModalPdfButton: documentRef.querySelector("#record-modal-pdf-btn"),
     errorFields: Array.from(documentRef.querySelectorAll("[data-error-for]"))
   };
+
+  function setModalRecordId(recordId = "") {
+    const normalizedId = recordId || "";
+
+    [
+      elements.recordModalEditButton,
+      elements.recordModalDeleteButton,
+      elements.recordModalPdfButton
+    ].forEach((button) => {
+      if (button) {
+        button.dataset.id = normalizedId;
+      }
+    });
+
+    if (elements.recordModalPanel) {
+      elements.recordModalPanel.dataset.recordId = normalizedId;
+    }
+  }
+
+  function closeRecordModal() {
+    if (!elements.recordModal) {
+      return;
+    }
+
+    elements.recordModal.hidden = true;
+    if (elements.recordModalTitle) {
+      elements.recordModalTitle.textContent = "Informacion del atleta";
+    }
+    setModalRecordId("");
+    documentRef.body.classList.remove("is-modal-open");
+    documentRef.documentElement.classList.remove("is-modal-open");
+  }
+
+  function openRecordModal(record) {
+    if (!elements.recordModal || !elements.recordModalBody) {
+      return;
+    }
+
+    elements.recordModalBody.innerHTML = createRecordDetailMarkup(record);
+    if (elements.recordModalTitle) {
+      elements.recordModalTitle.textContent = `Informacion del atleta: ${record.nombre || "Sin nombre"}`;
+    }
+    setModalRecordId(record.id);
+    elements.recordModal.hidden = false;
+    documentRef.body.classList.add("is-modal-open");
+    documentRef.documentElement.classList.add("is-modal-open");
+  }
+
+  elements.recordModal?.addEventListener("click", (event) => {
+    const target = event.target;
+
+    if (target instanceof HTMLElement && target.hasAttribute("data-modal-close")) {
+      closeRecordModal();
+    }
+  });
+
+  documentRef.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && elements.recordModal && !elements.recordModal.hidden) {
+      closeRecordModal();
+    }
+  });
 
   function renderValidation(validation) {
     elements.errorFields.forEach((errorField) => {
@@ -144,7 +303,7 @@ export function createUIController(documentRef = document) {
     if (!records.length) {
       elements.historyBody.innerHTML = `
         <tr class="history-table__empty-row">
-          <td colspan="7">Todavia no hay registros guardados en el almacenamiento local.</td>
+          <td colspan="6">Todavia no hay registros guardados en el almacenamiento local.</td>
         </tr>
       `;
       return;
@@ -163,6 +322,8 @@ export function createUIController(documentRef = document) {
   }
 
   return {
-    render
+    render,
+    openRecordModal,
+    closeRecordModal
   };
 }

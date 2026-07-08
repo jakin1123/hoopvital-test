@@ -22,12 +22,24 @@ const EXCEL_COLUMNS = [
   "Clasificación IMC",
   "Lugar Test",
   "Distancia (m)",
+  "Detenciones",
   "Pulso Inicio",
   "Tiempo Test",
   "Tiempo Segundos",
   "Pulso Final",
   "Pulso 1 Min",
-  "Pulso 5 Min"
+  "Pulso 5 Min",
+  "Flexiones Codo (Reps)",
+  "Flexiones Codo (Tiempo)",
+  "Flexiones Codo (Segundos)",
+  "Obs. Flexiones Codo",
+  "Abdominales (Reps)",
+  "Abdominales (Tiempo)",
+  "Abdominales (Segundos)",
+  "Salto Sin Impulso (m)",
+  "Velocidad 14 m (s)",
+  "Desplazamiento Zona (s)",
+  "Salto Vertical (m)"
 ];
 
 const HEADER_STYLE = {
@@ -149,12 +161,24 @@ export function buildExcelRow(record) {
     "Clasificación IMC": record.clasificacionIMC ?? "",
     "Lugar Test": record.testLugar ?? "",
     "Distancia (m)": record.testDistanciaMetros ?? "",
+    "Detenciones": record.testDetenciones ?? 0,
     "Pulso Inicio": record.testPulsoInicio ?? "",
     "Tiempo Test": record.testTiempoTexto ?? "",
     "Tiempo Segundos": record.testTiempoSegundos ?? "",
     "Pulso Final": record.testPulsoFinal ?? "",
     "Pulso 1 Min": record.testPulso1Min ?? "",
-    "Pulso 5 Min": record.testPulso5Min ?? ""
+    "Pulso 5 Min": record.testPulso5Min ?? "",
+    "Flexiones Codo (Reps)": record.testFuerzaFlexionesCodo ?? "",
+    "Flexiones Codo (Tiempo)": record.testFuerzaFlexionesCodoTiempoTexto ?? "",
+    "Flexiones Codo (Segundos)": record.testFuerzaFlexionesCodoTiempoSegundos ?? "",
+    "Obs. Flexiones Codo": record.testFuerzaObservacionesFlexionesCodo ?? "",
+    "Abdominales (Reps)": record.testFuerzaAbdominales ?? "",
+    "Abdominales (Tiempo)": record.testFuerzaAbdominalesTiempoTexto ?? "",
+    "Abdominales (Segundos)": record.testFuerzaAbdominalesTiempoSegundos ?? "",
+    "Salto Sin Impulso (m)": record.testFuerzaSaltoSinImpulso ?? "",
+    "Velocidad 14 m (s)": record.testFuerzaVelocidad14m ?? "",
+    "Desplazamiento Zona (s)": record.testFuerzaDesplazamientoZona ?? "",
+    "Salto Vertical (m)": record.testFuerzaSaltoVertical ?? ""
   };
 }
 
